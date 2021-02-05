@@ -4,7 +4,7 @@
 # @Time    :   2021/02/05 12:27:51
 # @Author  :   Allyx
 # @Email   :   allyxmiko@163.com
-# @Version :   1.0.2
+# @Version :   1.0.3
 
 # Here put the import lib
 from time import sleep
@@ -15,6 +15,7 @@ from config.database import DatabaseConfig
 img = ImgSpider(DatabaseConfig)
 count = img.get_img_count_from_db() + 1
 in_count = 0
+
 
 url = input("请输入随机图片接口的URL:")
 in_count_input = input("请输入连续停止数(默认20):")
@@ -61,7 +62,7 @@ while True:
             in_count += 1
             print("图片已存在！图片在数据库中的ID:{}，MD5:{}".format(result[0], result[1]))
             if(in_count == in_count_input):
-                print("已到达连续停止条件，停止程序运行，已生成{}张图片".format(count))
+                print("已到达连续停止条件，停止程序运行，已生成{}张图片".format(count - 1))
                 exit(1)
     else:
         print("请求错误！")
