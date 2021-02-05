@@ -4,7 +4,7 @@
 # @Time    :   2021/02/05 12:27:51
 # @Author  :   Allyx
 # @Email   :   allyxmiko@163.com
-# @Version :   1.0.1
+# @Version :   1.0.2
 
 # Here put the import lib
 from time import sleep
@@ -18,6 +18,12 @@ in_count = 0
 
 url = input("请输入随机图片接口的URL:")
 in_count_input = input("请输入连续停止数(默认20):")
+set_time = input("请输入连续请求间隔时间(默认0.6秒):")
+
+if(set_time == ""):
+    set_time = 0.6
+else:
+    float(set_time)
 
 if(in_count_input == ""):
     in_count_input = 20
@@ -60,4 +66,4 @@ while True:
     else:
         print("请求错误！")
         continue
-    sleep(0.6)
+    sleep(set_time)
