@@ -11,6 +11,7 @@ import pymysql
 import os
 
 class PySQL:
+    __login_err = ""
 
     def __init__(self, options:dict):
         try:
@@ -26,7 +27,7 @@ class PySQL:
             # 获得游标对象
             self.cursor = self.conn.cursor()
         except Exception as e:
-            print(e)
+            self.__login_err = e
 
     def description(self, sql):
         self.execute(sql)
@@ -94,8 +95,7 @@ class PySQL:
     def execute(self, sql):
         ''' 执行sql语句
             @sql sql语句
-            @return 执行成功返回0，执行失败返回-1
-        
+            @return 执行成功返回受影响的行数，执行失败返回-1
         '''
         try:
             res = self.cursor.execute(sql)
@@ -134,6 +134,18 @@ class PySQL:
     def db_close(self):
         '''关闭数据库'''
         self.conn.close()
+
+    def check_table(self, tableName):
+        stand = ['id', 'md5', 'url', 'save_name', 'create_time']
+        # 数据表是否存在
+        if(self.execute("SELECT * FROM {};".format(tableName)) == -1):
+            return False
+        else:
+            if(self.get_filed(tableName) == stand):
+                return True
+            else:
+                return False
+
     
     def __del__(self):
         '''对象销毁时自动调用关闭游标和数据库'''
@@ -141,8 +153,7 @@ class PySQL:
             self.cur_close()
             self.db_close()
         except Exception:
-            print("PySQL模块初始化失败！")
-            exit(0)
+            print("PySQL模块初始化失败！错误信息:{}".format(self.__login_err))
 
 
 if __name__ == '__main__':
