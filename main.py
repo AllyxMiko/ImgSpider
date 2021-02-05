@@ -4,7 +4,7 @@
 # @Time    :   2021/02/05 12:27:51
 # @Author  :   Allyx
 # @Email   :   allyxmiko@163.com
-# @Version :   1.0
+# @Version :   1.0.1
 
 # Here put the import lib
 from time import sleep
