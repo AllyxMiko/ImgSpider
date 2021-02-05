@@ -17,12 +17,12 @@ count = img.get_img_count_from_db() + 1
 in_count = 0
 
 url = input("请输入随机图片接口的URL:")
-in_count_input = int(input("请输入连续停止数(默认20):"))
+in_count_input = input("请输入连续停止数(默认20):")
 
-if(url == ""):
-    url = "https://api.mtyqx.cn/api/random.php"
 if(in_count_input == ""):
     in_count_input = 20
+else:
+    int(in_count_input)
 
 while True:
     # 获取到响应对象
@@ -61,4 +61,4 @@ while True:
         print("请求错误！")
         continue
     count += 1
-    sleep(1)
+    sleep(0.6)
