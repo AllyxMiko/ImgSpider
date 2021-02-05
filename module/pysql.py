@@ -33,10 +33,18 @@ class PySQL:
         return self.cursor.description
 
     def get_filed(self, tableName):
+        ''' 获取表的字段
+            @tableName 表名
+            @return 返回一个带有字段的列表
+        '''
         self.execute("SELECT * FROM {};".format(tableName))
         return [tuple[0] for tuple in self.cursor.description]
 
     def fetch_all(self, sql):
+        ''' 获取数据
+            @sql sql语句
+            @return 返回执行结果是一个元组
+        '''
         self.execute(sql)
         return self.cursor.fetchall()
 
