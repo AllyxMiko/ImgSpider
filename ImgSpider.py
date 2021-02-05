@@ -4,7 +4,7 @@
 # @Time    :   2021/02/05 00:42:54
 # @Author  :   Allyx
 # @Email   :   allyxmiko@163.com
-# @Version :   1.0
+# @Version :   1.0.1
 
 # Here put the import lib
 import os
@@ -19,7 +19,7 @@ class ImgSpider:
     def __init__(self, config):
         # 检查数据库配置文件
         if(not self.check_config_finish(config)):
-            print("数据库未配置，请先配置数据库。")
+            print("数据库未配置，请先去config/database.py中配置数据库。")
             exit(0)
         # 初始化数据库链接对象
         self.pysql = PySQL(config)
