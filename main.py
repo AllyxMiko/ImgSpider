@@ -42,7 +42,7 @@ while True:
             if(img.save_img(res, filename)):
                 print("图片保存成功！MD5:{}，原文件名:{}，保存名:{}".format(file_md5, img.get_img_name(res), filename))
                 if(img.write_db(file_md5, img.get_url(res), filename)):
-                    pass
+                    count += 1
                 else:
                     # 为了保证同步，如果数据库写入失败则删除本地文件
                     img.del_img(filename)
@@ -60,5 +60,4 @@ while True:
     else:
         print("请求错误！")
         continue
-    count += 1
     sleep(0.6)
