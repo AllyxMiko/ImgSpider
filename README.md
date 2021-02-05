@@ -8,7 +8,8 @@
     1. 安装依赖文件
         1.1 进入项目根目录
         1.2 命令行运行 pip install -r requirements.txt
-    2. 运行main.py即可
+    2. 运行main.py
+    3. 第一次运行请去根目录下的config文件夹中的database.py里配置数据库。
 
 ### 条目说明
     1. "请输入随机图片接口的URL" 这个地址必须是随机的图片API
