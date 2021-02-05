@@ -55,6 +55,16 @@ class PySQL:
         '''
         return self.execute("DROP TABLE IF EXISTS {};".format(tableName))
 
+
+    @staticmethod
+    def check_database_config(databaseconfig:dict):
+        for i in databaseconfig:
+            if(databaseconfig[i] == "" or databaseconfig == None):
+                return False
+        else:
+            return True
+
+
     def check_sql_file(self, sql_file):
         ''' 判断是否为sql文件
             @sql_file 传入的sql文件路径
@@ -127,8 +137,12 @@ class PySQL:
     
     def __del__(self):
         '''对象销毁时自动调用关闭游标和数据库'''
-        self.cur_close()
-        self.db_close()
+        try:
+            self.cur_close()
+            self.db_close()
+        except Exception:
+            print("PySQL模块初始化失败！")
+            exit(0)
 
 
 if __name__ == '__main__':
