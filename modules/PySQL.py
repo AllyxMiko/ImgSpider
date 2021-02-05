@@ -8,7 +8,7 @@
 
 # Here put the import lib
 import pymysql
-import os
+from os.path import isfile
 
 class PySQL:
     __login_err = ""
@@ -18,7 +18,7 @@ class PySQL:
             # 初始化数据库链接
             self.conn = pymysql.connect(
                 host=options['host'],
-                port=options['port'],
+                port=int(options['port']),
                 user=options['user'],
                 password=options['password'],
                 database=options['database'],
@@ -57,15 +57,6 @@ class PySQL:
         return self.execute("DROP TABLE IF EXISTS {};".format(tableName))
 
 
-    @staticmethod
-    def check_database_config(databaseconfig:dict):
-        for i in databaseconfig:
-            if(databaseconfig[i] == "" or databaseconfig == None):
-                return False
-        else:
-            return True
-
-
     def check_sql_file(self, sql_file):
         ''' 判断是否为sql文件
             @sql_file 传入的sql文件路径
@@ -82,7 +73,7 @@ class PySQL:
             @return 返回sql文件的内容
         '''
         # 判断文件是否存在
-        if(os.path.isfile(sql_file)):
+        if(isfile(sql_file)):
             # 判断是否为sql文件
             if(self.check_sql_file(sql_file)):
                 with open(sql_file, "r") as f:
@@ -153,7 +144,8 @@ class PySQL:
             self.cur_close()
             self.db_close()
         except Exception:
-            print("PySQL模块初始化失败！错误信息:{}".format(self.__login_err))
+            # 之后以日志形式记录
+            pass
 
 
 if __name__ == '__main__':

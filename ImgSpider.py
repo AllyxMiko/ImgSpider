@@ -1,113 +1,61 @@
 #! /usr/bin/env python
 # -*- encoding: utf-8 -*-
 # @File    :   ImgSpider.py
-# @Time    :   2021/02/05 00:42:54
+# @Time    :   2021/02/05 20:53:07
 # @Author  :   Allyx
 # @Email   :   allyxmiko@163.com
-# @Version :   1.0.1
+# @Version :   1.2.1
 
 # Here put the import lib
-import os
-import time
-from hashlib import md5
-import requests
-from module.pysql import PySQL
-from config.database import DatabaseConfig
+from time import sleep
+from tkinter import StringVar, Tk,Text,Label,Entry,Button
+from tkinter.constants import END
+from modules.ImgSpiderRun import ImgSpiderRun
+from threading import Thread
 
-class ImgSpider:
+VERSION = "1.2.1"
+# 根窗口
+root = Tk()
+var = StringVar()
+msg_box = Text(root, relief="groove", width=90, height=24)
 
-    def __init__(self, config):
-        # 检查数据库配置文件
-        if(not self.check_config_finish(config)):
-            print("数据库未配置，请先去config/database.py中配置数据库。")
-            exit(0)
-        # 初始化数据库链接对象
-        self.pysql = PySQL(config)
-        # 检查数据库
-        if(not self.pysql.check_table("img")):
-            # 删除原先数据表
-            self.pysql.drop_table('img')
-            # 创建新的数据表
-            self.pysql.sql_file_execute("sql/create_table.sql")
+def run():
+    img.main()
 
+def start_download():
+    msg_box.insert(END, "开始下载......\r\n")
+    img.input_url = var.get()
+    img.tag = False
+    Thread(target=run, daemon=True).start()
 
-    def check_config_finish(self, config):
-        return PySQL.check_database_config(config)
-
-    def cal_img_md5(self, res):
-        return md5(res.content).hexdigest()
-
-    def send_request(self, url, headers={}):
-        ''' 请求URL
-            @url 请求的地址
-            @headers 请求头，默认为空
-            @return 返回请求对象
-        '''
-        return requests.get(url, headers=headers)
-
-    def get_img_count_from_db(self):
-        self.pysql.execute("SELECT count(`id`) FROM `img`;")
-        count = self.pysql.cursor.fetchone()
-        return count[0]
-
-    def check_md5(self, md5):
-        if(self.pysql.execute("SELECT * FROM `img` WHERE `md5`=\'{}\'".format(md5)) == 0):
-            data = self.pysql.cursor.fetchone()
-            if(data is None):
-                return -1
-            else:
-                return data
-        else:
-            return self.pysql.cursor.fetchone()
-
-    def get_img_type(self, res):
-        return self.get_img_name(res).split(".")[-1]
-
-    def get_img_name(self, res):
-        return self.get_url(res).split("/")[-1]
-
-    def get_state_code(self, res):
-        return res.status_code
-
-    def write_db(self, md5, url, save_name):
-        # 需要md5， url， 保存的名称
-        localtime = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        sql = "INSERT INTO `img` (`md5`, `url`, `save_name`, `create_time`) VALUES (\'{}\', \'{}\', \'{}\', \'{}\');".format(md5, url, save_name, localtime)
-        res = self.pysql.execute(sql)
-        if(res == 1):
-            return True
-        else:
-            return False
-
-    def save_img(self, res, filename):
-        file_path = "img/{}"
-        with open(file_path.format(filename), "wb") as f:
-            if(f.write(res.content) == int(self.get_header_value(res, "Content-Length"))):
-                return True
-            else:
-                return False
-
-    def get_url(self, res):
-        return res.url
-
-    def del_img(self, filename):
-        return os.remove('img/{}'.format(filename))
-
-    def get_header_value(self, res, key=""):
-        ''' 通过key取出headers中的值
-            @res 请求的响应
-            @key 其中的键，默认为空，如果为空则返回整个headers
-            @return key为空返回整个headers，key不为空返回对应的值
-        '''
-        if(key == ""):
-            return res.headers
-        else:
-            if(key in res.headers):
-                return res.headers[key]
-            else:
-                raise KeyError
-
-
-if __name__ == '__main__':
-    img = ImgSpider(DatabaseConfig)
     
+def stop_download():
+    img.tag = True
+    msg_box.insert(END, '停止下载......\r\n')
+
+def init_img():
+    global img
+    img = ImgSpiderRun(msg_box)
+
+
+Thread(target=init_img, daemon=True).start()
+sleep(0.5)
+# 设置标题
+root.title("随机图片接口爬取 by Allyx  ver {}".format(VERSION))
+# 设置窗口大小
+# 窗口宽高
+ww = 660
+wh = 400
+# 设定窗口大小和位置
+root.geometry("{}x{}+{}+{}".format(ww, wh, int(root.winfo_screenwidth() / 2 - ww / 2), int(root.winfo_screenheight() / 2 - wh / 2 - 50)))
+# 地址提示框
+Label(root, text="接口地址:").place(x=52, y=20, anchor="nw")
+# 输入框
+Entry(root, width=45, textvariable=var).place(x=117, y=22, anchor="nw")
+# 开始按钮
+Button(root, text="开始下载", command=start_download).place(x=452, y=17, anchor="nw")
+# 停止按键
+Button(root, text="停止下载", command=stop_download).place(x=527, y=17, anchor="nw")
+# 下载显示
+msg_box.place(x=14, y=65, anchor="nw")
+root.mainloop()
